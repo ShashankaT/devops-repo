@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hostworkflow
+  namespace: east2
+  labels:
+    app: hostworkflow
+    environment: production
+    region: east2
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hostworkflow
+  template:
+    metadata:
+      labels:
+        app: hostworkflow
+    spec:
+      containers:
+      - name: hostworkflow
+        image: myregistry/hostworkflow:v1.0
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: REGION
+          value: "east2"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "400m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hostworkflow-service
+  namespace: east2
+spec:
+  selector:
+    app: hostworkflow
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: ClusterIP

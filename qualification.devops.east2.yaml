@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qualification
+  namespace: east2
+  labels:
+    app: qualification
+    environment: production
+    region: east2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: qualification
+  template:
+    metadata:
+      labels:
+        app: qualification
+    spec:
+      containers:
+      - name: qualification
+        image: myregistry/qualification:v1.0
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: REGION
+          value: "east2"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qualification-service
+  namespace: east2
+spec:
+  selector:
+    app: qualification
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: ClusterIP

@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seatsolver
+  namespace: east2
+  labels:
+    app: seatsolver
+    environment: production
+    region: east2
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: seatsolver
+  template:
+    metadata:
+      labels:
+        app: seatsolver
+    spec:
+      containers:
+      - name: seatsolver
+        image: myregistry/seatsolver:v1.0
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: REGION
+          value: "east2"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seatsolver-service
+  namespace: east2
+spec:
+  selector:
+    app: seatsolver
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
+# Multi-app test update
