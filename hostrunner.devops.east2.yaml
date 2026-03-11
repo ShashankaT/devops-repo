@@ -24,7 +24,7 @@ spec:
         - containerPort: 80
         env:
         - name: ASPNETCORE_ENVIRONMENT
-          value: "Production"
+          value: "Dev"
         - name: REGION
           value: "east2"
         resources:
